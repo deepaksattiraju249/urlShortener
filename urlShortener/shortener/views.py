@@ -14,9 +14,16 @@ def shortenUrl(request):
 		url = request.POST.get("urlToShorten","")
 		if url == "":
 			return HttpResponseRedirect("/")
-		mUrl = Url()
 		url = url.replace("http://","")
 		url = url.replace("https://","")
+		QS = Url.objects.all().filter(actualUrl=url)
+		if(len(QS)>0):
+			UrlObject = QS[0]
+			t = get_template("shortened.html")
+			return HttpResponse(t.render(Context({"actual_url":url, "shortened_url":dehydrate(UrlObject.id)})))	
+
+		mUrl = Url()
+		
 		mUrl.actualUrl = url
 		mUrl.save()
 		# mUrl.shortenedUrl = shorten(url)
